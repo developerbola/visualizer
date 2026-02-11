@@ -3899,7 +3899,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-app"
+name = "visualizer"
 version = "0.1.0"
 dependencies = [
  "cpal",
