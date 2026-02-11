@@ -1,16 +1,11 @@
-html {
-  background-color: #121212;
-}
-
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  background-color: transparent !important;
+  background: transparent !important;
 }
 
 :root {
-  background-color: transparent !important;
+  background: transparent !important;
   color-scheme: dark;
 }
 
@@ -32,7 +27,7 @@ body {
 }
 
 .bar {
-  background-color: #ffffff;
+  background: #ffffff;
   border-radius: 4px;
   transition: height 0.08s ease-out;
   min-height: 4px;
@@ -53,16 +48,15 @@ body {
     sans-serif;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .settings-content {
   padding: 24px;
   padding-top: 10px;
   flex: 1;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin-top: 30px;
 }
 
 .settings-scroll-container {
@@ -70,15 +64,6 @@ body {
   overflow-y: auto;
   padding-right: 15px;
   margin-top: 10px;
-}
-
-.settings-scroll-container::-webkit-scrollbar {
-  width: 4px;
-}
-
-.settings-scroll-container::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 10px;
 }
 
 .settings-panel h2 {
@@ -111,7 +96,7 @@ body {
 
 .settings-group input[type="number"],
 .settings-select {
-  background: #1e1e1e;
+  background: #1c1c1c;
   border: 1px solid #2a2a2a;
   color: white;
   padding: 10px 12px;
@@ -170,7 +155,7 @@ body {
 }
 
 .loading {
-  background: #121212;
+  background: #111;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -180,9 +165,11 @@ body {
 }
 
 .titlebar {
+  position: fixed;
+  top: 0;
+  background: #1e1e1e;
   height: 32px;
   width: 100%;
-  background: transparent;
   flex-shrink: 0;
   -webkit-app-region: drag;
   z-index: 9999;

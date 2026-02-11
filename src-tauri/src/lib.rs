@@ -100,7 +100,10 @@ pub fn run() {
             let settings_i = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
             let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&settings_i, &quit_i])?;
-            let tray_icon = tauri::image::Image::from_path("icons/tray/32x32.png")?;
+
+            // Use include_bytes! for the tray icon to ensure it's bundled into the binary
+            let tray_icon = tauri::image::Image::from_bytes(include_bytes!("../icons/tray/32x32.png"))?;
+            
             let _tray = TrayIconBuilder::new()
                 .icon(tray_icon)
                 .menu(&menu)
@@ -119,16 +122,17 @@ pub fn run() {
                 })
                 .build(app)?;
 
-            let _visualizer = app.get_webview_window("main").unwrap();
+            // Ensure the main visualizer window is visible and focusable
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                // Make the main visualizer window click-through by default
+                let _ = window.set_ignore_cursor_events(true);
+            }
             
-            // Allow settings window to be backgrounded easily
+            // Start with settings hidden if needed, or focused if shown
+            // By default settings is shown in tauri.conf.json
             if let Some(settings) = app.get_webview_window("settings") {
                 let _ = settings.set_focus();
-            }
-
-            // Make the main visualizer window click-through by default
-            if let Some(window) = app.get_webview_window("main") {
-                let _ = window.set_ignore_cursor_events(true);
             }
 
             Ok(())

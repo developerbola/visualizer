@@ -7,6 +7,7 @@
     "core:default",
     "opener:default",
     "allow-ui-commands",
-    "core:window:allow-set-visible-on-all-workspaces"
+    "core:window:allow-set-visible-on-all-workspaces",
+    "core:window:allow-start-dragging"
   ]
 }
