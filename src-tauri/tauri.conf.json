@@ -30,7 +30,9 @@
         "height": 500,
         "decorations": true,
         "resizable": false,
-        "alwaysOnTop": false
+        "alwaysOnTop": false,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true
       }
     ],
     "security": {

@@ -1,3 +1,7 @@
+html {
+  background-color: #121212;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -41,14 +45,24 @@ body {
 }
 
 .settings-panel {
-  padding: 24px;
-  background-color: #121212;
   color: #fff;
   height: 100vh;
   box-sizing: border-box;
   font-family:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
     sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.settings-content {
+  padding: 24px;
+  padding-top: 10px;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .settings-scroll-container {
@@ -163,4 +177,14 @@ body {
   justify-content: center;
   font-family: sans-serif;
   color: #444;
+}
+
+.titlebar {
+  height: 32px;
+  width: 100%;
+  background: transparent;
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+  z-index: 9999;
+  user-select: none;
 }

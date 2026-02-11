@@ -12,8 +12,6 @@ fn start_audio_capture<R: Runtime>(app: tauri::AppHandle<R>) {
         // Use default input device (microphone)
         let device = host.default_input_device().expect("no input device available");
 
-        println!("Using default input device (Microphone): {:?}", device.name());
-
         let config = device
             .default_input_config()
             .expect("Failed to get default input config");
@@ -102,9 +100,9 @@ pub fn run() {
             let settings_i = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
             let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&settings_i, &quit_i])?;
-
+            let tray_icon = tauri::image::Image::from_path("icons/tray/32x32.png")?;
             let _tray = TrayIconBuilder::new()
-                .icon(app.default_window_icon().unwrap().clone())
+                .icon(tray_icon)
                 .menu(&menu)
                 .show_menu_on_left_click(true)
                 .on_menu_event(|app, event| match event.id.as_ref() {

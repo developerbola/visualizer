@@ -98,7 +98,6 @@ function Visualizer() {
             opacity: 0.8 + (mag / 200) * 0.2,
             width: `${settings.barWidth}px`,
             backgroundColor: settings.barColor,
-            // Combined shadow: Glow + Optional Contrast (Black) Outline
             boxShadow: `0 0 8px ${settings.barColor}cc`,
           }}
         />
@@ -130,168 +129,179 @@ function Settings() {
 
   return (
     <div className="settings-panel">
-      <h2>Visualizer Settings</h2>
+      <div
+        className="titlebar"
+        data-tauri-drag-region
+        onMouseDown={(e) => {
+          if (e.buttons === 1) getCurrentWindow().startDragging();
+        }}
+      />
 
-      <div className="settings-scroll-container">
-        <div className="settings-group">
-          <label>Bar Color</label>
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <input
-              type="color"
-              value={settings.barColor}
-              onChange={(e) => updateSetting("barColor", e.target.value)}
-              style={{
-                width: "40px",
-                height: "40px",
-                padding: "0",
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-              }}
-            />
-            <span
-              style={{
-                fontSize: "12px",
-                fontFamily: "monospace",
-              }}
-            >
-              {settings.barColor.toUpperCase()}
-            </span>
+      <div className="settings-content">
+        <h2>Visualizer Settings</h2>
+        <div className="settings-scroll-container">
+          <div className="settings-group">
+            <label>Bar Color</label>
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              <input
+                type="color"
+                value={settings.barColor}
+                onChange={(e) => updateSetting("barColor", e.target.value)}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  padding: "0",
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "12px",
+                  fontFamily: "monospace",
+                }}
+              >
+                {settings.barColor.toUpperCase()}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div className="settings-group">
-          <label>Line Count ({settings.lineCount})</label>
-          <input
-            type="range"
-            min="4"
-            max="56"
-            step="1"
-            value={settings.lineCount}
-            onChange={(e) =>
-              updateSetting("lineCount", parseInt(e.target.value))
-            }
-          />
-        </div>
-
-        <div className="settings-group">
-          <label>Bar Width (px)</label>
-          <input
-            type="number"
-            value={settings.barWidth}
-            min="1"
-            max="50"
-            onChange={(e) =>
-              updateSetting("barWidth", parseInt(e.target.value) || 1)
-            }
-          />
-        </div>
-
-        <div className="settings-group">
-          <label>Gap between bars (px)</label>
-          <input
-            type="number"
-            value={settings.barGap}
-            min="0"
-            max="20"
-            onChange={(e) =>
-              updateSetting("barGap", parseInt(e.target.value) || 0)
-            }
-          />
-        </div>
-
-        <div className="settings-group">
-          <label>Sensitivity ({settings.multiplier})</label>
-          <input
-            type="range"
-            min="1"
-            max="500"
-            value={settings.multiplier}
-            onChange={(e) =>
-              updateSetting("multiplier", parseInt(e.target.value))
-            }
-          />
-        </div>
-
-        <div className="settings-group">
-          <label>Vertical Position {posY}</label>
-          <input
-            type="range"
-            min="0"
-            max="1440"
-            value={posY}
-            onChange={(e) => {
-              setPosY(e.target.value);
-              invoke("update_window_position", {
-                x: parseFloat(posX),
-                y: parseFloat(e.target.value),
-              });
-            }}
-          />
-        </div>
-
-        <div className="settings-group">
-          <label>Horizontal Position {posX}</label>
-          <input
-            type="range"
-            min="0"
-            max="2560"
-            value={posX}
-            onChange={(e) => {
-              setPosX(e.target.value);
-              invoke("update_window_position", {
-                x: parseFloat(e.target.value),
-                y: parseFloat(posY),
-              });
-            }}
-          />
-        </div>
-
-        <div className="settings-group checkbox-group">
-          <label>
+          <div className="settings-group">
+            <label>Line Count ({settings.lineCount})</label>
             <input
-              type="checkbox"
-              checked={settings.isDoubleSided}
-              onChange={(e) => updateSetting("isDoubleSided", e.target.checked)}
+              type="range"
+              min="4"
+              max="56"
+              step="1"
+              value={settings.lineCount}
+              onChange={(e) =>
+                updateSetting("lineCount", parseInt(e.target.value))
+              }
             />
-            Mirror vertically (Double Sided)
-          </label>
-        </div>
+          </div>
 
-        <div className="settings-group checkbox-group">
-          <label>
+          <div className="settings-group">
+            <label>Bar Width (px)</label>
             <input
-              type="checkbox"
-              checked={alwaysOnTop}
-              onChange={(e) => {
-                setAlwaysOnTop(e.target.checked);
-                invoke("set_always_on_top", { always: e.target.checked });
-              }}
+              type="number"
+              value={settings.barWidth}
+              min="1"
+              max="50"
+              onChange={(e) =>
+                updateSetting("barWidth", parseInt(e.target.value) || 1)
+              }
             />
-            Keep on top
-          </label>
-        </div>
+          </div>
 
-        <div className="settings-group checkbox-group">
-          <label>
+          <div className="settings-group">
+            <label>Gap between bars (px)</label>
             <input
-              type="checkbox"
-              checked={allWorkspaces}
+              type="number"
+              value={settings.barGap}
+              min="0"
+              max="20"
+              onChange={(e) =>
+                updateSetting("barGap", parseInt(e.target.value) || 0)
+              }
+            />
+          </div>
+
+          <div className="settings-group">
+            <label>Sensitivity ( {settings.multiplier} )</label>
+            <input
+              type="range"
+              min="1"
+              max="500"
+              value={settings.multiplier}
+              onChange={(e) =>
+                updateSetting("multiplier", parseInt(e.target.value))
+              }
+            />
+          </div>
+
+          <div className="settings-group">
+            <label>Vertical Position ( {posY} )</label>
+            <input
+              type="range"
+              min="0"
+              max="1440"
+              value={posY}
               onChange={(e) => {
-                setAllWorkspaces(e.target.checked);
-                invoke("set_visible_on_all_workspaces", {
-                  visible: e.target.checked,
+                setPosY(e.target.value);
+                invoke("update_window_position", {
+                  x: parseFloat(posX),
+                  y: parseFloat(e.target.value),
                 });
               }}
             />
-            Show on all Workspaces
-          </label>
-        </div>
-      </div>
+          </div>
 
-      <p className="hint">
-        Visualizer is click-through. Use settings to move it.
-      </p>
+          <div className="settings-group">
+            <label>Horizontal Position ( {posX} px )</label>
+            <input
+              type="range"
+              min="0"
+              max="2560"
+              value={posX}
+              onChange={(e) => {
+                setPosX(e.target.value);
+                invoke("update_window_position", {
+                  x: parseFloat(e.target.value),
+                  y: parseFloat(posY),
+                });
+              }}
+            />
+          </div>
+
+          <div className="settings-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={settings.isDoubleSided}
+                onChange={(e) =>
+                  updateSetting("isDoubleSided", e.target.checked)
+                }
+              />
+              Mirror vertically (Double Sided)
+            </label>
+          </div>
+
+          <div className="settings-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={alwaysOnTop}
+                onChange={(e) => {
+                  setAlwaysOnTop(e.target.checked);
+                  invoke("set_always_on_top", { always: e.target.checked });
+                }}
+              />
+              Keep on top
+            </label>
+          </div>
+
+          <div className="settings-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={allWorkspaces}
+                onChange={(e) => {
+                  setAllWorkspaces(e.target.checked);
+                  invoke("set_visible_on_all_workspaces", {
+                    visible: e.target.checked,
+                  });
+                }}
+              />
+              Show on all Workspaces
+            </label>
+          </div>
+        </div>
+
+        <p className="hint">
+          Visualizer is click-through. Use settings to move it.
+        </p>
+      </div>
     </div>
   );
 }
