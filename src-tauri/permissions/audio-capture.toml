@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-ui-commands"
+description = "Enables UI control commands"
+commands.allow = [
+    "start_audio_capture", 
+    "update_window_position", 
+    "set_always_on_top", 
+    "set_visible_on_all_workspaces"
+]
