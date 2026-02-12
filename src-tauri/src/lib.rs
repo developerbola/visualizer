@@ -68,7 +68,15 @@ fn start_audio_capture<R: Runtime>(app: tauri::AppHandle<R>) {
 #[tauri::command]
 fn update_window_position(app: tauri::AppHandle, x: f32, y: f32) {
     if let Some(window) = app.get_webview_window("main") {
-        let _ = window.set_position(tauri::PhysicalPosition::new(x as i32, y as i32));
+        if let Ok(Some(monitor)) = window.current_monitor() {
+            let monitor_size = monitor.size();
+            let window_size = window.outer_size().unwrap_or(tauri::PhysicalSize::new(0, 0));
+            
+            let physical_x = (monitor_size.width as f32 * x / 100.0) as i32 - (window_size.width as i32 / 2);
+            let physical_y = (monitor_size.height as f32 * y / 100.0) as i32 - (window_size.height as i32 / 2);
+            
+            let _ = window.set_position(tauri::PhysicalPosition::new(physical_x, physical_y));
+        }
     }
 }
 

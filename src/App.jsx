@@ -7,10 +7,10 @@ import "./App.css";
 function Visualizer() {
   const [settings, setSettings] = useState({
     multiplier: 100,
-    lineCount: 32,
-    barWidth: 3,
-    barGap: 4,
-    isDoubleSided: false,
+    lineCount: 10,
+    barWidth: 2,
+    barGap: 12,
+    isDoubleSided: true,
     barColor: "#ffffff",
   });
 
@@ -107,15 +107,15 @@ function Visualizer() {
 function Settings() {
   const [settings, setSettings] = useState({
     multiplier: 100,
-    lineCount: 32,
-    barWidth: 3,
-    barGap: 4,
-    isDoubleSided: false,
+    lineCount: 10,
+    barWidth: 2,
+    barGap: 12,
+    isDoubleSided: true,
     barColor: "#ffffff",
   });
 
-  const [posX, setPosX] = useState(100);
-  const [posY, setPosY] = useState(500);
+  const [posX, setPosX] = useState(50);
+  const [posY, setPosY] = useState(90);
   const [alwaysOnTop, setAlwaysOnTop] = useState(true);
   const [allWorkspaces, setAllWorkspaces] = useState(true);
 
@@ -124,6 +124,13 @@ function Settings() {
     setSettings(newSettings);
     emit("settings-update", newSettings);
   };
+
+  useEffect(() => {
+    invoke("update_window_position", {
+      x: parseFloat(posX),
+      y: parseFloat(posY),
+    });
+  }, []);
 
   return (
     <div className="settings-panel">
@@ -192,12 +199,13 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Gap between bars (px)</label>
+          <label>Gap between bars ( {settings.barGap} px )</label>
           <input
-            type="number"
+            type="range"
+            min="5"
+            max="30"
+            step="1"
             value={settings.barGap}
-            min="0"
-            max="20"
             onChange={(e) =>
               updateSetting("barGap", parseInt(e.target.value) || 0)
             }
@@ -218,11 +226,12 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Vertical Position ( {posY} )</label>
+          <label>Vertical Position ( {posY}% )</label>
           <input
             type="range"
             min="0"
-            max="1440"
+            max="100"
+            step="0.1"
             value={posY}
             onChange={(e) => {
               setPosY(e.target.value);
@@ -235,11 +244,12 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Horizontal Position ( {posX} px )</label>
+          <label>Horizontal Position ( {posX}% )</label>
           <input
             type="range"
             min="0"
-            max="2560"
+            max="100"
+            step="0.1"
             value={posX}
             onChange={(e) => {
               setPosX(e.target.value);
