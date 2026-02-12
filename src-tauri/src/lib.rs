@@ -127,12 +127,25 @@ pub fn run() {
                 let _ = window.show();
                 // Make the main visualizer window click-through by default
                 let _ = window.set_ignore_cursor_events(true);
+                // Make it visible on all desktops by default
+                let _ = window.set_visible_on_all_workspaces(true);
             }
             
             // Start with settings hidden if needed, or focused if shown
             // By default settings is shown in tauri.conf.json
             if let Some(settings) = app.get_webview_window("settings") {
                 let _ = settings.set_focus();
+                // Make it visible on all desktops by default
+                let _ = settings.set_visible_on_all_workspaces(true);
+                
+                // Prevent window from closing and hide it instead
+                let settings_c = settings.clone();
+                settings.on_window_event(move |event| {
+                    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                        api.prevent_close();
+                        let _ = settings_c.hide();
+                    }
+                });
             }
 
             Ok(())

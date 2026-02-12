@@ -96,7 +96,7 @@ function Visualizer() {
             opacity: 0.8 + (mag / 200) * 0.2,
             width: `${settings.barWidth}px`,
             backgroundColor: settings.barColor,
-            boxShadow: `0 0 8px ${settings.barColor}cc`,
+            border: ".1px solid #00000020",
           }}
         />
       ))}
@@ -117,7 +117,7 @@ function Settings() {
   const [posX, setPosX] = useState(100);
   const [posY, setPosY] = useState(500);
   const [alwaysOnTop, setAlwaysOnTop] = useState(true);
-  const [allWorkspaces, setAllWorkspaces] = useState(false);
+  const [allWorkspaces, setAllWorkspaces] = useState(true);
 
   const updateSetting = (key, value) => {
     const newSettings = { ...settings, [key]: value };
