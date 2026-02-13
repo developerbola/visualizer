@@ -334,7 +334,7 @@ function Settings() {
               checked={settings.isDoubleSided}
               onCheckedChange={(e) => updateSetting("isDoubleSided", e)}
             />
-            Mirror vertically (Double Sided)
+            Double Sided
           </label>
         </div>
 
