@@ -230,84 +230,77 @@ function Settings() {
           <div className="flex items-center justify-between">
             <p>Line Count</p> <p>{settings.lineCount}</p>
           </div>
-          <Slider defaultValue={[33]} max={100} step={1} />
-          <input
-            type="range"
-            class="custom-range"
-            min="4"
-            max="31"
-            step="1"
-            value={settings.lineCount}
-            onChange={(e) =>
-              updateSetting("lineCount", parseInt(e.target.value))
-            }
+          <Slider
+            min={4}
+            max={31}
+            step={1}
+            value={[settings.lineCount]}
+            onValueChange={(value) => updateSetting("lineCount", value[0])}
           />
         </div>
 
         <div className="settings-group">
           <div className="flex items-center justify-between">
-            <p>Bar Width</p> <p>{settings.barWidth}</p>
+            <p>Bar Width</p>
+            <p>{settings.barWidth}</p>
           </div>
-          <input
-            type="number"
-            value={settings.barWidth}
-            min="1"
-            max="50"
-            onChange={(e) =>
-              updateSetting("barWidth", parseInt(e.target.value) || 1)
-            }
+
+          <Slider
+            min={1}
+            max={50}
+            step={1}
+            value={[settings.barWidth]}
+            onValueChange={(value) => updateSetting("barWidth", value[0])}
           />
         </div>
 
         <div className="settings-group">
           <div className="flex items-center justify-between">
-            <p>Gap between bars</p> <p>{settings.barGap}</p>
+            <p>Gap between bars</p>
+            <p>{settings.barGap}</p>
           </div>
-          <input
-            type="range"
-            class="custom-range"
-            min="5"
-            max="30"
-            step="1"
-            value={settings.barGap}
-            onChange={(e) =>
-              updateSetting("barGap", parseInt(e.target.value) || 0)
-            }
+
+          <Slider
+            min={5}
+            max={30}
+            step={1}
+            value={[settings.barGap]}
+            onValueChange={(value) => updateSetting("barGap", value[0])}
           />
         </div>
 
         <div className="settings-group">
           <div className="flex items-center justify-between">
-            <p>Sensitivity</p> <p>{settings.multiplier}</p>
+            <p>Sensitivity</p>
+            <p>{settings.multiplier}</p>
           </div>
-          <input
-            type="range"
-            class="custom-range"
-            min="1"
-            max="500"
-            value={settings.multiplier}
-            onChange={(e) =>
-              updateSetting("multiplier", parseInt(e.target.value))
-            }
+
+          <Slider
+            min={1}
+            max={500}
+            step={1}
+            value={[settings.multiplier]}
+            onValueChange={(value) => updateSetting("multiplier", value[0])}
           />
         </div>
 
         <div className="settings-group">
           <div className="flex items-center justify-between">
-            <p>Vertical Position</p> <p>{posY}%</p>
+            <p>Vertical Position</p>
+            <p>{posY}%</p>
           </div>
-          <input
-            type="range"
-            class="custom-range"
-            min="0"
-            max="100"
-            step="0.1"
-            value={posY}
-            onChange={(e) => {
-              setPosY(e.target.value);
+
+          <Slider
+            min={0}
+            max={100}
+            step={0.1}
+            value={[parseFloat(posY)]}
+            onValueChange={(value) => {
+              const newY = value[0];
+              setPosY(newY);
               invoke("update_window_position", {
                 x: parseFloat(posX),
-                y: parseFloat(e.target.value),
+                y: newY,
               });
             }}
           />
@@ -315,19 +308,20 @@ function Settings() {
 
         <div className="settings-group">
           <div className="flex items-center justify-between">
-            <p>Horizontal Position</p> <p>{posX}%</p>
+            <p>Horizontal Position</p>
+            <p>{posX}%</p>
           </div>
-          <input
-            type="range"
-            class="custom-range"
-            min="0"
-            max="100"
-            step="0.1"
-            value={posX}
-            onChange={(e) => {
-              setPosX(e.target.value);
+
+          <Slider
+            min={0}
+            max={100}
+            step={0.1}
+            value={[parseFloat(posX)]}
+            onValueChange={(value) => {
+              const newX = value[0];
+              setPosX(newX);
               invoke("update_window_position", {
-                x: parseFloat(e.target.value),
+                x: newX,
                 y: parseFloat(posY),
               });
             }}
