@@ -32,7 +32,8 @@
         "resizable": false,
         "alwaysOnTop": false,
         "titleBarStyle": "Overlay",
-        "hiddenTitle": true
+        "hiddenTitle": true,
+        "transparent": true
       }
     ],
     "security": {

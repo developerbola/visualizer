@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { emit, listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import "./App.css";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 
 function Visualizer() {
   const [settings, setSettings] = useState({
@@ -30,7 +32,6 @@ function Visualizer() {
     };
   }, []);
 
-  // Removed the settings useEffect that directly set magnitudes to avoid conflict with animation loop
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
@@ -82,10 +83,8 @@ function Visualizer() {
       const targets = targetsRef.current;
       const currents = currentsRef.current;
 
-      // Sync array lengths if lineCount changed or init mismatch
       if (targets.length !== lineCount) {
         if (targets.length < lineCount) {
-          // Fill with new 0s or keep old? Just 0s is safe
           const diff = lineCount - targets.length;
           for (let k = 0; k < diff; k++) targets.push(0);
         } else {
@@ -104,7 +103,7 @@ function Visualizer() {
 
       const newMagnitudes = [];
       let hasVisualChange = false;
-      const smoothingFactor = 0.25; // Lower = smoother/slower, Higher = snappier
+      const smoothingFactor = 0.25;
 
       for (let i = 0; i < lineCount; i++) {
         const target = targets[i] || 0;
@@ -112,7 +111,6 @@ function Visualizer() {
 
         const diff = target - current;
 
-        // Apply smoothing
         if (Math.abs(diff) > 0.1) {
           current += diff * smoothingFactor;
           hasVisualChange = true;
@@ -125,7 +123,6 @@ function Visualizer() {
 
       currentsRef.current = newMagnitudes;
 
-      // Only update state if values changed or if we need to resize (e.g. lineCount changed)
       if (hasVisualChange || lastRenderedLineCount.current !== lineCount) {
         setMagnitudes(newMagnitudes);
         lastRenderedLineCount.current = lineCount;
@@ -230,11 +227,15 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Line Count ({settings.lineCount})</label>
+          <div className="flex items-center justify-between">
+            <p>Line Count</p> <p>{settings.lineCount}</p>
+          </div>
+          <Slider defaultValue={[33]} max={100} step={1} />
           <input
             type="range"
+            class="custom-range"
             min="4"
-            max="56"
+            max="31"
             step="1"
             value={settings.lineCount}
             onChange={(e) =>
@@ -244,7 +245,9 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Bar Width (px)</label>
+          <div className="flex items-center justify-between">
+            <p>Bar Width</p> <p>{settings.barWidth}</p>
+          </div>
           <input
             type="number"
             value={settings.barWidth}
@@ -257,9 +260,12 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Gap between bars ( {settings.barGap} px )</label>
+          <div className="flex items-center justify-between">
+            <p>Gap between bars</p> <p>{settings.barGap}</p>
+          </div>
           <input
             type="range"
+            class="custom-range"
             min="5"
             max="30"
             step="1"
@@ -271,9 +277,12 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Sensitivity ( {settings.multiplier} )</label>
+          <div className="flex items-center justify-between">
+            <p>Sensitivity</p> <p>{settings.multiplier}</p>
+          </div>
           <input
             type="range"
+            class="custom-range"
             min="1"
             max="500"
             value={settings.multiplier}
@@ -284,9 +293,12 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Vertical Position ( {posY}% )</label>
+          <div className="flex items-center justify-between">
+            <p>Vertical Position</p> <p>{posY}%</p>
+          </div>
           <input
             type="range"
+            class="custom-range"
             min="0"
             max="100"
             step="0.1"
@@ -302,9 +314,12 @@ function Settings() {
         </div>
 
         <div className="settings-group">
-          <label>Horizontal Position ( {posX}% )</label>
+          <div className="flex items-center justify-between">
+            <p>Horizontal Position</p> <p>{posX}%</p>
+          </div>
           <input
             type="range"
+            class="custom-range"
             min="0"
             max="100"
             step="0.1"
@@ -321,10 +336,9 @@ function Settings() {
 
         <div className="settings-group checkbox-group">
           <label>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={settings.isDoubleSided}
-              onChange={(e) => updateSetting("isDoubleSided", e.target.checked)}
+              onCheckedChange={(e) => updateSetting("isDoubleSided", e)}
             />
             Mirror vertically (Double Sided)
           </label>
@@ -332,12 +346,11 @@ function Settings() {
 
         <div className="settings-group checkbox-group">
           <label>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={alwaysOnTop}
-              onChange={(e) => {
-                setAlwaysOnTop(e.target.checked);
-                invoke("set_always_on_top", { always: e.target.checked });
+              onCheckedChange={(e) => {
+                setAlwaysOnTop(e);
+                invoke("set_always_on_top", { always: e });
               }}
             />
             Keep on top
@@ -346,13 +359,12 @@ function Settings() {
 
         <div className="settings-group checkbox-group">
           <label>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={allWorkspaces}
-              onChange={(e) => {
-                setAllWorkspaces(e.target.checked);
+              onCheckedChange={(e) => {
+                setAllWorkspaces(e);
                 invoke("set_visible_on_all_workspaces", {
-                  visible: e.target.checked,
+                  visible: e,
                 });
               }}
             />
