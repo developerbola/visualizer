@@ -16,6 +16,9 @@ function Visualizer() {
 
   const [magnitudes, setMagnitudes] = useState(new Array(32).fill(0));
   const settingsRef = useRef(settings);
+  const targetsRef = useRef(new Array(32).fill(0));
+  const currentsRef = useRef(new Array(32).fill(0));
+  const lastRenderedLineCount = useRef(settings.lineCount);
 
   useEffect(() => {
     const unlistenPromise = listen("settings-update", (event) => {
@@ -27,18 +30,9 @@ function Visualizer() {
     };
   }, []);
 
+  // Removed the settings useEffect that directly set magnitudes to avoid conflict with animation loop
   useEffect(() => {
     settingsRef.current = settings;
-    setMagnitudes((prev) => {
-      const { lineCount } = settings;
-      if (prev.length === lineCount) return prev;
-      const arr = [...prev];
-      if (arr.length < lineCount) {
-        return [...arr, ...new Array(lineCount - arr.length).fill(0)];
-      } else {
-        return arr.slice(0, lineCount);
-      }
-    });
   }, [settings]);
 
   useEffect(() => {
@@ -69,7 +63,7 @@ function Visualizer() {
           const scaled = Math.min(180, avg * multiplier);
           newMagnitudes.push(scaled);
         }
-        setMagnitudes(newMagnitudes);
+        targetsRef.current = newMagnitudes;
       });
       return unlisten;
     };
@@ -78,6 +72,70 @@ function Visualizer() {
     return () => {
       unlistenPromise.then((unlisten) => unlisten());
     };
+  }, []);
+
+  useEffect(() => {
+    let rafId;
+
+    const animate = () => {
+      const { lineCount } = settingsRef.current;
+      const targets = targetsRef.current;
+      const currents = currentsRef.current;
+
+      // Sync array lengths if lineCount changed or init mismatch
+      if (targets.length !== lineCount) {
+        if (targets.length < lineCount) {
+          // Fill with new 0s or keep old? Just 0s is safe
+          const diff = lineCount - targets.length;
+          for (let k = 0; k < diff; k++) targets.push(0);
+        } else {
+          targets.length = lineCount;
+        }
+      }
+
+      if (currents.length !== lineCount) {
+        if (currents.length < lineCount) {
+          const diff = lineCount - currents.length;
+          for (let k = 0; k < diff; k++) currents.push(0);
+        } else {
+          currents.length = lineCount;
+        }
+      }
+
+      const newMagnitudes = [];
+      let hasVisualChange = false;
+      const smoothingFactor = 0.25; // Lower = smoother/slower, Higher = snappier
+
+      for (let i = 0; i < lineCount; i++) {
+        const target = targets[i] || 0;
+        let current = currents[i] || 0;
+
+        const diff = target - current;
+
+        // Apply smoothing
+        if (Math.abs(diff) > 0.1) {
+          current += diff * smoothingFactor;
+          hasVisualChange = true;
+        } else {
+          current = target;
+        }
+
+        newMagnitudes[i] = current;
+      }
+
+      currentsRef.current = newMagnitudes;
+
+      // Only update state if values changed or if we need to resize (e.g. lineCount changed)
+      if (hasVisualChange || lastRenderedLineCount.current !== lineCount) {
+        setMagnitudes(newMagnitudes);
+        lastRenderedLineCount.current = lineCount;
+      }
+
+      rafId = requestAnimationFrame(animate);
+    };
+
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   return (

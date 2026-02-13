@@ -29,7 +29,8 @@ body {
 .bar {
   background: #ffffff;
   border-radius: 4px;
-  transition: height 0.08s ease-out;
+  /* transition handled via JS interpolation for smoothness */
+  will-change: height;
   min-height: 4px;
   position: relative;
 }
